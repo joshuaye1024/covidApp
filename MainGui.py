@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import Overrides
 import Main
+from datetime import date
 
 #Create class mainGui as instance of tk.Tk
 class MainGui(tk.Tk):
@@ -48,9 +49,9 @@ class MainGui(tk.Tk):
         #create cal
         #cal = tkcal.DateEntry(self, date_pattern='ymmdd', width=15W, bg="darkblue", fg="white", year=2020)
 
-        date = tk.StringVar()
+        d = tk.StringVar()
 
-        cal = Overrides.CustomDateEntry(self, textvariable = date, date_pattern='yyyymmdd', width=15, bg="darkblue", fg="white", year=2020)
+        cal = Overrides.CustomDateEntry(self, textvariable = d, date_pattern='yyyymmdd', width=15, bg="darkblue", fg="white", year=2020)
 
         cal.grid(column=1, row=10, sticky = tk.W)
 
@@ -59,7 +60,12 @@ class MainGui(tk.Tk):
         def getData():
             Main.lowerStringVar(n)
             regionString = n.get()
-            dateString = date.get()
+
+            if d.get() == date.today().strftime("%Y%m%d"):
+                dateString = 'current'
+            else:
+                dateString = d.get()
+
             Main.getCovidData(dateString,regionString)
 
 
@@ -68,6 +74,8 @@ class MainGui(tk.Tk):
 
         # Set the position of button on the top of window.
         btn.grid(column=1, row=15, sticky = tk.W)
+
+        #Create Entries to store JSON Data
 
 
 if __name__ == "__main__":

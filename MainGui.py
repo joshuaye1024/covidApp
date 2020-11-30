@@ -1,7 +1,7 @@
-
 import tkinter as tk
 from tkinter import ttk
 import Overrides
+import Main
 
 #Create class mainGui as instance of tk.Tk
 class MainGui(tk.Tk):
@@ -47,15 +47,24 @@ class MainGui(tk.Tk):
 
         #create cal
         #cal = tkcal.DateEntry(self, date_pattern='ymmdd', width=15W, bg="darkblue", fg="white", year=2020)
-        cal = Overrides.CustomDateEntry(self, date_pattern='yyyymmdd', width=15, bg="darkblue", fg="white", year=2020)
+
+        date = tk.StringVar()
+
+        cal = Overrides.CustomDateEntry(self, textvariable = date, date_pattern='yyyymmdd', width=15, bg="darkblue", fg="white", year=2020)
 
         cal.grid(column=1, row=10, sticky = tk.W)
 
         #create submit button
 
-        #cal.get_date()
+        def getData():
+            Main.lowerStringVar(n)
+            regionString = n.get()
+            dateString = date.get()
+            Main.getCovidData(dateString,regionString)
+
+
         btn = ttk.Button(self, text='Get Data',
-                     command=print(1))
+                     command= getData)
 
         # Set the position of button on the top of window.
         btn.grid(column=1, row=15, sticky = tk.W)

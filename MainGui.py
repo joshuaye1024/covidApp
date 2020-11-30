@@ -1,21 +1,7 @@
+
 import tkinter as tk
 from tkinter import ttk
-
-import tkcalendar as tkcal
-
-#override _select method in DateEntry.py to fit api grab date format
-
-class CustomDateEntry(tkcal.DateEntry):
-
-    def _select(self, event=None):
-        date = self._calendar.selection_get()
-        if date is not None:
-            self._set_text(date.strftime('%Y%m%d'))
-            self.event_generate('<<DateEntrySelected>>')
-        self._top_cal.withdraw()
-        if 'readonly' not in self.state():
-            self.focus_set()
-
+import Overrides
 
 #Create class mainGui as instance of tk.Tk
 class MainGui(tk.Tk):
@@ -60,16 +46,16 @@ class MainGui(tk.Tk):
 
 
         #create cal
-        cal = CustomDateEntry(self, width=15, bg="darkblue", fg="white", year=2020)
+        #cal = tkcal.DateEntry(self, date_pattern='ymmdd', width=15W, bg="darkblue", fg="white", year=2020)
+        cal = Overrides.CustomDateEntry(self, date_pattern='yyyymmdd', width=15, bg="darkblue", fg="white", year=2020)
 
         cal.grid(column=1, row=10, sticky = tk.W)
 
         #create submit button
 
-        print(cal.selection_get())
-
+        #cal.get_date()
         btn = ttk.Button(self, text='Get Data',
-                     command=print(12))
+                     command=print(1))
 
         # Set the position of button on the top of window.
         btn.grid(column=1, row=15, sticky = tk.W)

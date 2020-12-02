@@ -25,13 +25,33 @@ class MainGui(tk.Tk):
                   background='green', foreground="white",
                   font=("Times New Roman", 15)).grid(row=0, column=1)
 
+        self.grid_propagate(False)
+
+        # Create a frame for the canvas with non-zero row&column weights
+        frame_canvas = tk.Frame(self, relief = tk.SUNKEN, borderwidth = 2,background='green',)
+        frame_canvas.grid(row=1, column=0, pady=(5, 0), sticky='nw')
+        frame_canvas.grid_rowconfigure(0, weight=1)
+        frame_canvas.grid_columnconfigure(0, weight=1)
+        # Set grid_propagate to False to allow 5-by-5 buttons resizing later
+        frame_canvas.update_idletasks()
+
+
+        # To make the output data scrollable, create a canvas that holds this frame
+        outputCanvas = tk.Canvas(frame_canvas, bg="yellow")
+        outputCanvas.grid(row = 0, column = 0, sticky = "news")
+
+        #add scrollbar to canvas
+        vsb = tk.Scrollbar(frame_canvas, orient="vertical", command=outputCanvas.yview)
+        vsb.grid(row=0, column=1, sticky='ns')
+        outputCanvas.configure(yscrollcommand=vsb.set)
+
         #Create frame for drop-down menus and button
         inputFrame = ttk.Frame(self, relief = tk.SUNKEN, borderwidth = 2)
-        outputFrame = ttk.Frame(self, relief = tk.SUNKEN, borderwidth = 2)
+        outputFrame = ttk.Frame(outputCanvas, relief = tk.SUNKEN, borderwidth = 2)
 
-
-        inputFrame.grid(row=16, column=1, rowspan = 15, columnspan = 1, padx=10, pady=10, sticky = tk.W)
+        inputFrame.grid(row=2, column=0, rowspan = 15, columnspan = 1, padx=10, pady=10, sticky = tk.W)
         outputFrame.grid(row = 1, column = 1, rowspan = 15, columnspan = 1, padx = 10, pady = 10, sticky = tk.W)
+
 
         # Create Region and Date Labels
         ttk.Label(inputFrame, text="Select the Region :",
@@ -98,6 +118,16 @@ class MainGui(tk.Tk):
                 output = tk.Entry(outputFrame, textvariable=out, width=22)
                 out.set(self.dataDict[labels[x]])
                 output.grid(column=2, padx=10, row=2 * x + 1, sticky=tk.W, columnspan=1)
+
+            outputFrame.update_idletasks()
+
+            frame_canvas.configure(width=20 + vsb.winfo_width(),
+                                height=20)
+
+            # Set the canvas scrolling region
+            outputCanvas.configure(scrollregion=outputCanvas.bbox("all"))
+
+
 
         btn = ttk.Button(inputFrame, text='Get Data',
                      command= getData)

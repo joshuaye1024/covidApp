@@ -35,7 +35,6 @@ class MainGui(tk.Tk):
         # Set grid_propagate to False to allow 5-by-5 buttons resizing later
         frame_canvas.update_idletasks()
 
-
         # To make the output data scrollable, create a canvas that holds this frame
         outputCanvas = tk.Canvas(frame_canvas, bg="yellow")
         outputCanvas.grid(row = 0, column = 0, sticky = "news")
@@ -45,12 +44,39 @@ class MainGui(tk.Tk):
         vsb.grid(row=0, column=1, sticky='ns')
         outputCanvas.configure(yscrollcommand=vsb.set)
 
+
         #Create frame for drop-down menus and button
         inputFrame = ttk.Frame(self, relief = tk.SUNKEN, borderwidth = 2)
         outputFrame = ttk.Frame(outputCanvas, relief = tk.SUNKEN, borderwidth = 2)
 
         inputFrame.grid(row=2, column=0, rowspan = 15, columnspan = 1, padx=10, pady=10, sticky = tk.W)
         outputFrame.grid(row = 1, column = 1, rowspan = 15, columnspan = 1, padx = 10, pady = 10, sticky = tk.W)
+
+        #create resizable canvas window to house outputFrame
+        canvas_window = outputCanvas.create_window((4, 4), window=outputFrame, anchor="nw",
+                                                   # add view port frame to canvas
+                                                   tags="outputFrame")
+
+        def onFrameConfigure(event):
+            '''Reset the scroll region to encompass the inner frame'''
+            outputCanvas.configure(scrollregion=outputCanvas.bbox(
+                "all"))  # whenever the size of the frame changes, alter the scroll region respectively.
+
+        def onCanvasConfigure(event):
+            '''Reset the canvas window to encompass inner frame when required'''
+            canvas_width = event.width
+            outputCanvas.itemconfig(canvas_window,
+                                    width=canvas_width)  # whenever the size of the canvas changes alter the window region respectively.
+
+        #create bindings to accomodate changes in frame size
+        outputFrame.bind("<Configure>",
+                           onFrameConfigure)  # bind an event whenever the size of the viewPort frame changes.
+        outputCanvas.bind("<Configure>",
+                         onCanvasConfigure)  # bind an event whenever the size of the viewPort frame changes.
+
+        onFrameConfigure(None)  # perform an initial stretch on render, otherwise the scroll region has a tiny border until the first resize
+
+
 
 
         # Create Region and Date Labels
@@ -119,13 +145,14 @@ class MainGui(tk.Tk):
                 out.set(self.dataDict[labels[x]])
                 output.grid(column=2, padx=10, row=2 * x + 1, sticky=tk.W, columnspan=1)
 
+            outputFrame.configure(width = 20, height = 20)
+
+            outputCanvas.configure(yscrollcommand=vsb.set)
+
             outputFrame.update_idletasks()
 
-            frame_canvas.configure(width=20 + vsb.winfo_width(),
-                                height=20)
-
             # Set the canvas scrolling region
-            outputCanvas.configure(scrollregion=outputCanvas.bbox("all"))
+            outputFrame.configure(scrollregion=outputCanvas.bbox("all"))
 
 
 

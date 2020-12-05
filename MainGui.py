@@ -3,7 +3,6 @@ from tkinter import ttk
 import Overrides
 import Main
 from datetime import date
-import tktable
 
 #Create class mainGui as instance of tk.Tk
 class MainGui(tk.Tk):

@@ -9,6 +9,11 @@ import tkinter as tk
 
 class CustomCalendar(tkcal.Calendar):
 
+    """
+
+    Custom Calendar Class
+    """
+
     def parse_date(self, date):
         """Parse string date in the locale format and return the corresponding datetime.date."""
         date_format = self._properties['date_pattern'].lower()

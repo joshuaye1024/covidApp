@@ -115,6 +115,12 @@ class MainGui(tk.Tk):
         #create submit button
 
         def getData():
+
+            #First, delete all entries and labels already in the frame (but not the label in row 0)
+            for widget in outputFrame.winfo_children():
+                if isinstance(widget, tk.Entry) or isinstance(widget, tk.Label) and not widget.grid_info()['row']  == 0 :
+                    widget.destroy()
+
             Main.lowerStringVar(n)
             regionString = n.get()
 
@@ -151,10 +157,6 @@ class MainGui(tk.Tk):
 
             outputFrame.update_idletasks()
 
-            # Set the canvas scrolling region
-            outputFrame.configure(scrollregion=outputCanvas.bbox("all"))
-
-
 
         btn = ttk.Button(inputFrame, text='Get Data',
                      command= getData)
@@ -173,9 +175,6 @@ class MainGui(tk.Tk):
         output = tk.Label(outputFrame, textvariable=o,font=("Times New Roman", 15), width=11, anchor = tk.W)
         o.set("Value")
         output.grid(column=2, row=0, padx=5, pady=15, sticky=tk.W, columnspan=1)
-
-
-        #Create Table to store JSON Data
 
 
 

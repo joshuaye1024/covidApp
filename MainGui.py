@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 import Overrides
 import Main
-from datetime import date
+import datetime
 
 #Create class mainGui as instance of tk.Tk
 class MainGui(tk.Tk):
@@ -52,7 +52,7 @@ class MainGui(tk.Tk):
         outputFrame.grid(row = 1, column = 1, rowspan = 15, columnspan = 1, padx = 10, pady = 10, sticky = tk.W)
 
         #create resizable canvas window to house outputFrame
-        canvas_window = outputCanvas.create_window((4, 4), window=outputFrame, anchor="nw",
+        canvas_window = outputCanvas.create_window((0, 0), window=outputFrame, anchor="nw",
                                                    # add view port frame to canvas
                                                    tags="outputFrame")
 
@@ -174,6 +174,98 @@ class MainGui(tk.Tk):
         output = tk.Label(outputFrame, textvariable=o,font=("Times New Roman", 15), width=11, anchor = tk.W)
         o.set("Value")
         output.grid(column=2, row=0, padx=5, pady=15, sticky=tk.W, columnspan=1)
+
+        #create graphing frame
+
+        graphFrame = ttk.Frame(self, relief=tk.SUNKEN, borderwidth=2)
+        graphFrame.grid(row=1, column=1, rowspan=15, columnspan=1, padx=10, pady=10, sticky=tk.W)
+
+        g = tk.StringVar()
+        output = tk.Label(graphFrame, textvariable=g, font=("Times New Roman", 15), width=11, anchor=tk.W)
+        g.set("Graph")
+        output.grid(column=2, row=0, padx=5, pady=15, sticky=tk.W, columnspan=1)
+
+        #create graphing input box
+        graphInputFrame = ttk.Frame(self, relief=tk.SUNKEN, borderwidth=2)
+        graphInputFrame.grid(row=2, column=1, rowspan=15, columnspan=1, padx=10, pady=10, sticky=tk.W)
+
+        ttk.Label(graphInputFrame, text="Select the Region :",
+                  font=("Times New Roman", 10), width=20).grid(column=0,
+                                                               row=5, padx=10, pady=15, sticky=tk.W)
+
+        ttk.Label(graphInputFrame, text="Select the date :",
+                  font=("Times New Roman", 10), width=20).grid(column=0,
+                                                               row=8, padx=10, pady=15, sticky=tk.W)
+        ttk.Label(graphInputFrame, text="Graph Category :",
+                  font=("Times New Roman", 10), width=20).grid(column=0,
+                                                               row=11, padx=10, pady=15, sticky=tk.W)
+
+        # make region dropdown menu
+        v = tk.StringVar()
+        regionGraph = ttk.Combobox(graphInputFrame, width=20, textvariable=v)
+
+        # Adding combobox drop down list
+        regionGraph['values'] = ("US", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
+                            "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
+                            "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
+                            "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
+                            "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY")
+
+        regionGraph.grid(column=1, row=5, sticky=tk.W)
+        # set default to first region
+        regionGraph.current(0)
+
+        #Add graph category drop down list
+        k = tk.StringVar()
+        categories = ttk.Combobox(graphInputFrame, width=20, textvariable=k)
+
+        # Adding combobox drop down list
+        categories['values'] = ("positive","negative","pending","hospitalizedCurrently",
+                              "hospitalizedCumulative","inIcuCurrently","inIcuCumulative",
+                              "onVentilatorCurrently","totalTestResults","deathIncrease",
+                              "hospitalizedIncrease","negativeIncrease","positiveIncrease",
+                                                                        "totalTestResultsIncrease"
+                              )
+
+        categories.grid(column=1, row=11, sticky=tk.W)
+        # set default to first region
+        categories.current(0)
+
+        # create cal
+        c = tk.StringVar()
+
+        cal = Overrides.CustomDateEntry(graphInputFrame, textvariable=c, date_pattern='yyyymmdd', width=20,
+                                        bg="darkblue",
+                                        fg="white", year=2020)
+
+        cal.grid(column=1, row=8, sticky=tk.W)
+
+        def getGraph():
+
+            graphCategory = k.get()
+            if c.get() == datetime.date.today().strftime("%Y%m%d"):
+                #make sure that when graphing the day is always one day behind
+                today = datetime.date.today()
+                diff = datetime.timedelta(days = 1)
+
+                gdate = today - diff
+                graphDate = gdate.strftime("%Y%m%d")
+            else:
+                graphDate = c.get()
+
+            if(v.get() == 'US'):
+                graphRegion = 'us'
+            else:
+                graphRegion = v.get()
+
+            Main.graphCovidData(graphCategory, int(graphDate), graphRegion)
+
+        btn = ttk.Button(graphInputFrame, text='Get Graph',
+                         command=getGraph)
+
+        # Set the position of button on the bottom of window.
+        btn.grid(column=1, row=15, sticky=tk.W)
+
 
 
 

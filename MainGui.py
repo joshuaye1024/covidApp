@@ -123,7 +123,7 @@ class MainGui(tk.Tk):
             Main.lowerStringVar(n)
             regionString = n.get()
 
-            if d.get() == date.today().strftime("%Y%m%d"):
+            if d.get() == datetime.date.today().strftime("%Y%m%d"):
                 dateString = 'current'
             else:
                 dateString = d.get()

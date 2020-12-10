@@ -111,6 +111,21 @@ class MainGui(tk.Tk):
 
         cal.grid(column=1, row=8, sticky = tk.W)
 
+        # create summary frame
+
+        graphFrame = ttk.Frame(self, relief=tk.SUNKEN, borderwidth=2)
+        graphFrame.grid(row=0, column=1, rowspan=15, columnspan=1, padx=10, pady=10, sticky=tk.W)
+
+        g = tk.StringVar()
+        title = tk.Label(graphFrame, textvariable=g, font=("Times New Roman", 15), width=11, anchor=tk.W)
+        g.set("Summary")
+        title.grid(column=0, row=0, padx=5, pady=15, sticky=tk.W, columnspan=1)
+
+        h = tk.StringVar()
+        body = tk.Label(graphFrame, textvariable=h, font=("Times New Roman", 12), width=11, anchor=tk.W)
+        h.set("Summary body")
+        body.grid(column=0, row=1, padx=5, pady=15, sticky=tk.W, columnspan=1)
+
         #create submit button
 
         def getData():
@@ -140,6 +155,20 @@ class MainGui(tk.Tk):
             labels = labelList
 
             for x in range(len(labels)):
+
+                if labels[x] == 'positiveIncrease':
+                    positiveIncrease = self.dataDict[labels[x]]
+                if labels[x] == 'inIcuCurrently':
+                    inIcuCurrently = self.dataDict[labels[x]]
+                if labels[x] == 'onVentilatorCurrently':
+                    onVentilatorCurrently = self.dataDict[labels[x]]
+                if labels[x] == 'deathIncrease':
+                    deathIncrease = self.dataDict[labels[x]]
+                if labels[x] == 'hospitalizedIncrease':
+                    hospitalizedIncrease = self.dataDict[labels[x]]
+
+
+
                 var = tk.StringVar()
                 label = tk.Label(outputFrame, textvariable=var, width=20, anchor = tk.W)
                 var.set(labels[x])
@@ -156,6 +185,12 @@ class MainGui(tk.Tk):
 
             outputFrame.update_idletasks()
 
+            h.set('On ' + str(d.get())+ ", in region " + regionString +", there were " + str(positiveIncrease) + " new cases.")
+            print('On ' + str(d.get())+ ", in region " + regionString +", there were " + str(positiveIncrease) + " new cases. "
+                  +"Additionally, there were " + str(inIcuCurrently) + " individuals in the ICU on this day, and " + str(onVentilatorCurrently)
+                  + " individuals on a ventilator. \n Furthermore, deaths increased by " + str(deathIncrease) + ", and hospitalizations by "
+                  + str(hospitalizedIncrease)+"."
+                  )
 
         btn = ttk.Button(inputFrame, text='Get Data',
                      command= getData)
@@ -175,15 +210,6 @@ class MainGui(tk.Tk):
         o.set("Value")
         output.grid(column=2, row=0, padx=5, pady=15, sticky=tk.W, columnspan=1)
 
-        #create graphing frame
-
-        graphFrame = ttk.Frame(self, relief=tk.SUNKEN, borderwidth=2)
-        graphFrame.grid(row=1, column=1, rowspan=15, columnspan=1, padx=10, pady=10, sticky=tk.W)
-
-        g = tk.StringVar()
-        output = tk.Label(graphFrame, textvariable=g, font=("Times New Roman", 15), width=11, anchor=tk.W)
-        g.set("Graph")
-        output.grid(column=2, row=0, padx=5, pady=15, sticky=tk.W, columnspan=1)
 
         #create graphing input box
         graphInputFrame = ttk.Frame(self, relief=tk.SUNKEN, borderwidth=2)
@@ -191,14 +217,18 @@ class MainGui(tk.Tk):
 
         ttk.Label(graphInputFrame, text="Select the Region :",
                   font=("Times New Roman", 10), width=20).grid(column=0,
-                                                               row=5, padx=10, pady=15, sticky=tk.W)
+                                                               row=5, padx=10, pady=8, sticky=tk.W)
 
         ttk.Label(graphInputFrame, text="Select the date :",
                   font=("Times New Roman", 10), width=20).grid(column=0,
-                                                               row=8, padx=10, pady=15, sticky=tk.W)
+                                                               row=8, padx=10, pady=8, sticky=tk.W)
         ttk.Label(graphInputFrame, text="Graph Category :",
                   font=("Times New Roman", 10), width=20).grid(column=0,
-                                                               row=11, padx=10, pady=15, sticky=tk.W)
+                                                               row=11, padx=10, pady=8, sticky=tk.W)
+
+        ttk.Label(graphInputFrame, text="Rolling Average (Days):",
+                  font=("Times New Roman", 10), width=23).grid(column=0,
+                                                               row=14, padx=10, pady=8, sticky=tk.W)
 
         # make region dropdown menu
         v = tk.StringVar()
@@ -240,6 +270,15 @@ class MainGui(tk.Tk):
 
         cal.grid(column=1, row=8, sticky=tk.W)
 
+
+        #Add rolling average Entry
+        y = tk.IntVar()
+
+        averageEntry = ttk.Entry(graphInputFrame, width=23, textvariable=y)
+
+        averageEntry.grid(column=1, row=14, sticky=tk.W)
+
+
         def getGraph():
 
             graphCategory = k.get()
@@ -258,7 +297,9 @@ class MainGui(tk.Tk):
             else:
                 graphRegion = v.get()
 
-            Main.graphCovidData(graphCategory, int(graphDate), graphRegion)
+            rollingAverageInt = y.get()
+
+            Main.graphCovidData(graphCategory, int(graphDate), graphRegion, rollingAverageInt)
 
         btn = ttk.Button(graphInputFrame, text='Get Graph',
                          command=getGraph)

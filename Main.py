@@ -44,7 +44,7 @@ def lowerStringVar(var):
         var.set(var.get().lower())
 
 
-def graphCovidData(category, dateFrom, region):
+def graphCovidData(category, dateFrom, region,rollingAverageInDays):
     def convertIntToTime(number):
         datetime_object = datetime.strptime(str(number), '%Y%m%d')
 
@@ -64,6 +64,8 @@ def graphCovidData(category, dateFrom, region):
     f['date'] = f['date'].apply(lambda x: convertIntToTime(x))
 
     # get graphable columns
+
+    f[category] = f[category].rolling(rollingAverageInDays).mean()
 
     # show the plot
     f.plot(x='date', y=category, kind='line')

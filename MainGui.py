@@ -249,18 +249,18 @@ class MainGui(tk.Tk):
         k = tk.StringVar()
         categories = ttk.Combobox(graphInputFrame, width=20, textvariable=k)
 
-        #create set that stores selected categories
-        selectedCats = {}
-        selectedCats = set()
+        #create set that stores selected categories; make it an instance variable so it can be changed beyond where it is used here
+        self.selectedCats = {}
+        self.selectedCats = set()
 
         # create function that creates new stringvar for a multiselect type tool
         def addNewItem(event):
-            selectedCats.add(k.get())
-            print(selectedCats)
+            self.selectedCats.add(k.get())
+            print(self.selectedCats)
 
             #regenerate string from set every time to avoid duplicates
             catString = ""
-            for elem in selectedCats:
+            for elem in self.selectedCats:
                 catString += elem + ", "
             k.set(catString)
 
@@ -278,8 +278,6 @@ class MainGui(tk.Tk):
                               )
 
         categories.grid(column=1, row=11, sticky=tk.W)
-        # set default to first region
-        categories.current(0)
 
 
         # create cal
@@ -302,7 +300,7 @@ class MainGui(tk.Tk):
 
         def getGraph():
 
-            graphCategories = list(selectedCats)
+            graphCategories = list(self.selectedCats)
             if c.get() == datetime.date.today().strftime("%Y%m%d"):
                 #make sure that when graphing the day is always one day behind
                 today = datetime.date.today()
@@ -328,8 +326,16 @@ class MainGui(tk.Tk):
         # Set the position of button on the bottom of window.
         btn.grid(column=1, row=15, sticky=tk.W)
 
+        def resetGraphCats():
+            self.selectedCats = {}
+            self.selectedCats = set()
+            k.set('')
 
+        resetbtn = ttk.Button(graphInputFrame, text='Reset Graph Categories',
+                         command=resetGraphCats)
 
+        # Set the position of button on the bottom of window.
+        resetbtn.grid(column=0, row=15, padx=10,sticky=tk.W)
 
 if __name__ == "__main__":
     maingui = MainGui()

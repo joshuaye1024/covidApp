@@ -10,8 +10,8 @@ from datetime import datetime
 
 def getCovidData(date, region):
     """
-    :param date:
-    :param region:
+    :param date: int
+    :param region: string
     :return: Dictionary of Covid Data fields and values
 
     To grab historic data, use the string "daily" for the date parameter.
@@ -44,7 +44,16 @@ def lowerStringVar(var):
         var.set(var.get().lower())
 
 
-def graphCovidData(category, dateFrom, region,rollingAverageInDays):
+def graphCovidData(categories, dateFrom, region, rollingAverageInDays):
+    """
+    :param categories: array of numerical categories to be graphed
+    :param dateFrom: int of date to be graphed up to
+    :region: string of region code
+    :rollingAverageInDays: int of rolling average length
+    :returns: graph of data
+
+    """
+
     def convertIntToTime(number):
         datetime_object = datetime.strptime(str(number), '%Y%m%d')
 
@@ -59,17 +68,29 @@ def graphCovidData(category, dateFrom, region,rollingAverageInDays):
     index = int(f.loc[f['date'] == dateFrom].index[0])
 
     # return the data from start of covid to this date; show only graphable columns
-    f = f.iloc[:index][['date', category]]
+
+    categories.append('date')
+    categories = categories[::-1]
+
+    f = f.iloc[:index][categories]
 
     f['date'] = f['date'].apply(lambda x: convertIntToTime(x))
 
     # get graphable columns
 
-    f[category] = f[category].rolling(rollingAverageInDays).mean()
+    cols = list(f.columns)
+
+    # create common axis object
+    ax = plt.gca()
+
+    for col in cols:
+        if not col == 'date':
+            f[col] = f[col].rolling(rollingAverageInDays).mean()
+            f.plot(x='date', y=col, kind='line', ax=ax)
 
     # show the plot
-    f.plot(x='date', y=category, kind='line')
 
+    # get current figure and set dimensions
     fig = plt.gcf()
     fig.set_size_inches(18.5, 10.5)
 

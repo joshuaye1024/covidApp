@@ -222,7 +222,7 @@ class MainGui(tk.Tk):
         ttk.Label(graphInputFrame, text="Select the date :",
                   font=("Times New Roman", 10), width=20).grid(column=0,
                                                                row=8, padx=10, pady=8, sticky=tk.W)
-        ttk.Label(graphInputFrame, text="Graph Category :",
+        ttk.Label(graphInputFrame, text="Graph Categories :",
                   font=("Times New Roman", 10), width=20).grid(column=0,
                                                                row=11, padx=10, pady=8, sticky=tk.W)
 
@@ -249,6 +249,26 @@ class MainGui(tk.Tk):
         k = tk.StringVar()
         categories = ttk.Combobox(graphInputFrame, width=20, textvariable=k)
 
+        #create set that stores selected categories
+        selectedCats = {}
+        selectedCats = set()
+
+        # create function that creates new stringvar for a multiselect type tool
+        def addNewItem(event):
+            selectedCats.add(k.get())
+            print(selectedCats)
+
+            #regenerate string from set every time to avoid duplicates
+            catString = ""
+            for elem in selectedCats:
+                catString += elem + ", "
+            k.set(catString)
+
+        #bind addNewItem method to selection of category
+        categories.bind("<<ComboboxSelected>>", addNewItem)
+
+
+
         # Adding combobox drop down list
         categories['values'] = ("positive","negative","pending","hospitalizedCurrently",
                               "hospitalizedCumulative","inIcuCurrently","inIcuCumulative",
@@ -260,6 +280,7 @@ class MainGui(tk.Tk):
         categories.grid(column=1, row=11, sticky=tk.W)
         # set default to first region
         categories.current(0)
+
 
         # create cal
         c = tk.StringVar()
@@ -281,7 +302,7 @@ class MainGui(tk.Tk):
 
         def getGraph():
 
-            graphCategory = k.get()
+            graphCategories = list(selectedCats)
             if c.get() == datetime.date.today().strftime("%Y%m%d"):
                 #make sure that when graphing the day is always one day behind
                 today = datetime.date.today()
@@ -299,7 +320,7 @@ class MainGui(tk.Tk):
 
             rollingAverageInt = y.get()
 
-            Main.graphCovidData(graphCategory, int(graphDate), graphRegion, rollingAverageInt)
+            Main.graphCovidData(graphCategories, int(graphDate), graphRegion, rollingAverageInt)
 
         btn = ttk.Button(graphInputFrame, text='Get Graph',
                          command=getGraph)

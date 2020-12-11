@@ -150,3 +150,36 @@ class CustomDateEntry(tkcal.DateEntry):
         self._calendar.bind('<<CalendarSelected>>', self._select)
         # hide calendar if it looses focus
         self._calendar.bind('<FocusOut>', self._on_focus_out_cal)
+
+class CustomCombobox(ttk.Combobox):
+    """Ttk Combobox widget combines a text field with a pop-down list of
+    values."""
+
+    def __init__(self, master=None, **kw):
+        """Construct a Ttk Combobox widget with the parent master.
+
+        STANDARD OPTIONS
+
+            class, cursor, style, takefocus
+
+        WIDGET-SPECIFIC OPTIONS
+
+            exportselection, justify, height, postcommand, state,
+            textvariable, values, width
+        """
+        ttk.Entry.__init__(self, master, "ttk::combobox", **kw)
+
+    def current(self, newindex=None):
+        """If newindex is supplied, sets the combobox value to the
+        element at position newindex in the list of values. Otherwise,
+        returns the index of the current value in the list of values
+        or -1 if the current value does not appear in the list."""
+        if newindex is None:
+            print(self.tk.getint(self.tk.call(self._w, "current")))
+            return self.tk.getint(self.tk.call(self._w, "current"))
+        return self.tk.call(self._w, "current", newindex)
+
+    def set(self, value):
+        """Sets the value of the combobox to value."""
+        self.tk.call(self._w, "set", value)
+

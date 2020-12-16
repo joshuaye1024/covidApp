@@ -235,11 +235,14 @@ class MainGui(tk.Tk):
         regionGraph = ttk.Combobox(graphInputFrame, width=20, textvariable=v)
 
         # Adding combobox drop down list
-        regionGraph['values'] = ("US", "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DC", "DE", "FL", "GA",
-                            "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD",
-                            "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ",
-                            "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC",
-                            "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY")
+        regionGraph['values'] = ("US", "AL", "AK", "AS", "AZ", "AR", "CA",
+                                 "CO", "CT", "DE", "DC", "FL", "GA", "GU",
+                                 "HI", "ID", "IL", "IN", "IA", "KS", "KY",
+                                 "LA", "ME", "MD", "MA", "MI", "MN", "MS",
+                                 "MO", "MT", "NE", "NV", "NH", "NJ", "NM",
+                                 "NY", "NC", "ND", "MP", "OH", "OK", "OR",
+                                 "PA", "PR", "RI", "SC", "SD", "TN", "TX",
+                                 "VI", "UT", "VT", "VA", "WA", "WV", "WI", "WY")
 
         regionGraph.grid(column=1, row=5, sticky=tk.W)
         # set default to first region

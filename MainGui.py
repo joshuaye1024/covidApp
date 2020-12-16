@@ -252,6 +252,7 @@ class MainGui(tk.Tk):
         #create set that stores selected categories; make it an instance variable so it can be changed beyond where it is used here
         self.selectedCats = {}
         self.selectedCats = set()
+        self.catStringFinal = ""
 
         # create function that creates new stringvar for a multiselect type tool
         def addNewItem(event):
@@ -262,6 +263,9 @@ class MainGui(tk.Tk):
             catString = ""
             for elem in self.selectedCats:
                 catString += elem + ", "
+
+            #set value of instance variable catStringFinal to catString for use in the plot window
+            self.catStringFinal = catString
             k.set(catString)
 
         #bind addNewItem method to selection of category
@@ -274,7 +278,7 @@ class MainGui(tk.Tk):
                               "hospitalizedCumulative","inIcuCurrently","inIcuCumulative",
                               "onVentilatorCurrently","totalTestResults","deathIncrease",
                               "hospitalizedIncrease","negativeIncrease","positiveIncrease",
-                                                                        "totalTestResultsIncrease"
+                                                                        "totalTestResultsIncrease","death"
                               )
 
         categories.grid(column=1, row=11, sticky=tk.W)
@@ -297,6 +301,8 @@ class MainGui(tk.Tk):
 
         averageEntry.grid(column=1, row=14, sticky=tk.W)
 
+        y.set(7)
+
 
         def getGraph():
 
@@ -318,8 +324,13 @@ class MainGui(tk.Tk):
 
             rollingAverageInt = y.get()
 
-            Main.graphCovidData(graphCategories, int(graphDate), graphRegion, rollingAverageInt)
+            Main.graphCovidData(graphCategories, int(graphDate), graphRegion, rollingAverageInt, self.catStringFinal)
 
+            print(graphCategories)
+            print(graphDate)
+            print(graphRegion)
+            print(rollingAverageInt)
+            print(self.catStringFinal)
         btn = ttk.Button(graphInputFrame, text='Get Graph',
                          command=getGraph)
 

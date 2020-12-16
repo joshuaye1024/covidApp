@@ -16,7 +16,7 @@ def OLSBase(categories, dateFrom, region, rollingAverageInDays, lagInDays):
     # note for reference: first element in categories list is ALWAYS taken as x in OLS calculation. The second element is always taken as y.
     # This, however, will not change the r^2 value.
 
-    f = Main.formatDataFrame(categories, dateFrom, region, rollingAverageInDays)
+    f = Main.formatDataFrame(categories, dateFrom, region)
 
     # shift x var by lagInDays.
     f[str(categories[0])] = f[str(categories[0])].shift(lagInDays)

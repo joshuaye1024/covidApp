@@ -56,7 +56,7 @@ def convertIntToTime(number):
     return datetime_object
 
 
-def formatDataFrame(categories, dateFrom, region, rollingAverageInDays):
+def formatDataFrame(categories, dateTo, region, dateFrom=None):
     """
     :param categories: array of numerical categories to be processed
     :param dateFrom: int of date to grab data up to
@@ -70,14 +70,20 @@ def formatDataFrame(categories, dateFrom, region, rollingAverageInDays):
     f = f.iloc[::-1].reset_index()
 
     # get index of target date
-    index = int(f.loc[f['date'] == dateFrom].index[0])
+    if not dateFrom == None:
+        indexFrom = int(f.loc[f['date'] == dateFrom].index[0])
+    indexTo = int(f.loc[f['date'] == dateTo].index[0])
 
     # return the data from start of covid to this date; show only graphable columns
 
     categories.append('date')
     categories = categories[::-1]
 
-    f = f.iloc[:index][categories]
+    #check whether dateFrom parameter is used; adjust accordingly
+    if not dateFrom == None:
+        f = f.iloc[indexFrom:indexTo][categories]
+    else:
+        f = f.iloc[:indexTo][categories]
 
     f['date'] = f['date'].apply(lambda x: convertIntToTime(x))
 
@@ -86,6 +92,7 @@ def formatDataFrame(categories, dateFrom, region, rollingAverageInDays):
 
 def graphCovidData(categories, dateFrom, region, rollingAverageInDays, windowTitle):
     """
+    Returns a graph of the requested covid data.
     :param categories: array of numerical categories to be graphed
     :param dateFrom: int of date to be graphed up to
     :region: string of region code
@@ -94,7 +101,7 @@ def graphCovidData(categories, dateFrom, region, rollingAverageInDays, windowTit
     :returns: graph of data
     """
 
-    f = formatDataFrame(categories, dateFrom, region, rollingAverageInDays)
+    f = formatDataFrame(categories, dateFrom, region)
 
     # get graphable columns
 

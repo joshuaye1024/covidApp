@@ -4,6 +4,15 @@ import statsmodels.api as sm
 
 
 def OLSBase(categories, dateFrom, region, rollingAverageInDays, lagInDays):
+    """
+    Base function for OLS calculations.
+    :param categories:
+    :param dateFrom:
+    :param region:
+    :param rollingAverageInDays:
+    :param lagInDays:
+    :return: regressionResults object; regression statistics can be called from this object.
+    """
     # note for reference: first element in categories list is ALWAYS taken as x in OLS calculation. The second element is always taken as y.
     # This, however, will not change the r^2 value.
 
@@ -33,12 +42,37 @@ def OLSBase(categories, dateFrom, region, rollingAverageInDays, lagInDays):
 
 
 def getRSquared(categories, dateFrom, region, rollingAverageInDays, lagInDays):
-    ols = OLSBase(categories, dateFrom, region, rollingAverageInDays, lagInDays)
+    """
+    Getter function for the rsquared statistic
+    :param categories:
+    :param dateFrom:
+    :param region:
+    :param rollingAverageInDays:
+    :param lagInDays:
+    :return: float; the rsquared number
+    """
 
-    return ols.rsquared
+    if not len(categories) == 2:
+        print("The categories array must have a length of 2!")
+        return
+    else:
+        ols = OLSBase(categories, dateFrom, region, rollingAverageInDays, lagInDays)
+        return ols.rsquared
 
 
 def getOLSSlope(categories, dateFrom, region, rollingAverageInDays, lagInDays):
-    ols = OLSBase(categories, dateFrom, region, rollingAverageInDays, lagInDays)
-
-    return ols.params[1]
+    """
+    Getter function for the slope statistic
+    :param categories:
+    :param dateFrom:
+    :param region:
+    :param rollingAverageInDays:
+    :param lagInDays:
+    :return: float; the slope
+    """
+    if not len(categories) == 2:
+        print("The categories array must have a length of 2!")
+        return
+    else:
+        ols = OLSBase(categories, dateFrom, region, rollingAverageInDays, lagInDays)
+        return ols.params[1]

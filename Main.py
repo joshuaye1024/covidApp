@@ -47,6 +47,10 @@ def lowerStringVar(var):
 
 
 def convertIntToTime(number):
+    """
+    :param number: date in YYYYMMDD form to convert
+    :return: equivalent datetime object of input date
+    """
     datetime_object = datetime.strptime(str(number), '%Y%m%d')
 
     return datetime_object

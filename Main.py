@@ -90,18 +90,18 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
     return f
 
 
-def graphCovidData(categories, dateFrom, region, rollingAverageInDays, windowTitle):
+def graphCovidData(categories, dateTo, region, rollingAverageInDays, windowTitle):
     """
     Returns a graph of the requested covid data.
     :param categories: array of numerical categories to be graphed
-    :param dateFrom: int of date to be graphed up to
+    :param dateTo: int of date to be graphed up to
     :region: string of region code
     :rollingAverageInDays: int of rolling average length
     :windowTitle: string that defines the plot window's title
     :returns: graph of data
     """
 
-    f = formatDataFrame(categories, dateFrom, region)
+    f = formatDataFrame(categories, dateTo, region)
 
     # get graphable columns
 

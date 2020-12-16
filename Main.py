@@ -7,7 +7,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
 from matplotlib.widgets import Slider
-import statsmodels.api as sm
 
 
 def getCovidData(date, region):
@@ -113,32 +112,3 @@ def graphCovidData(categories, dateFrom, region, rollingAverageInDays, windowTit
     fig.set_size_inches(18.5, 10.5)
 
     plt.show()
-
-
-def getRSquared(categories, dateFrom, region, rollingAverageInDays, lagInDays):
-    # note for reference: first element in categories list is ALWAYS taken as x in OLS calculation. The second element is always taken as y.
-    # This, however, will not change the r^2 value.
-
-    f = formatDataFrame(categories, dateFrom, region, rollingAverageInDays)
-
-    # shift x var by lagInDays.
-    f[str(categories[0])] = f[str(categories[0])].shift(lagInDays)
-
-    # get graphable columns
-
-    cols = list(f.columns)
-
-    for col in cols:
-        if not col == 'date':
-            f[col] = f[col].rolling(rollingAverageInDays).mean()
-
-    # drop rows with NaN as the only values
-    f = f.dropna()
-
-    x = f[str(categories[0])]
-    y = f[str(categories[1])]
-
-    # we add constant here to make sure regression is in form y_i = ax_i + b
-    ols = sm.OLS(y, sm.add_constant(x)).fit()
-
-    return ols.rsquared

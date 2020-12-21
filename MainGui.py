@@ -351,6 +351,8 @@ class MainGui(tk.Tk):
         # Set the position of button on the bottom of window.
         resetbtn.grid(column=0, row=15, padx=10,sticky=tk.W)
 
+
+
 if __name__ == "__main__":
     maingui = MainGui()
     maingui.mainloop()

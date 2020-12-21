@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# 2020-12-18
+# Josh Ye
+
 from tkinter import StringVar
 
 import requests
@@ -6,8 +10,8 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 from datetime import datetime
+import inspect
 from matplotlib.widgets import Slider
-
 
 def getCovidData(date, region):
     """
@@ -64,31 +68,43 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
     :rollingAverageInDays: int of rolling average length
     :returns: dataframe of data
     """
-    f = getCovidData("daily", region)
+    try:
+        f = getCovidData("daily", region)
 
-    # reverse data frame
-    f = f.iloc[::-1].reset_index()
+        # reverse data frame
+        f = f.iloc[::-1].reset_index()
 
-    # get index of target date
-    if not dateFrom == None:
-        indexFrom = int(f.loc[f['date'] == dateFrom].index[0])
-    indexTo = int(f.loc[f['date'] == dateTo].index[0])
+        # get index of target date
+        if not dateFrom == None:
+            indexFrom = int(f.loc[f['date'] == dateFrom].index[0])
+        indexTo = int(f.loc[f['date'] == dateTo].index[0])
 
-    # return the data from start of covid to this date; show only graphable columns
+        # return the data from start of covid to this date; show only graphable columns
 
-    categories.append('date')
-    categories = categories[::-1]
+        categories.append('date')
+        categories = categories[::-1]
 
-    #check whether dateFrom parameter is used; adjust accordingly
-    if not dateFrom == None:
-        f = f.iloc[indexFrom:indexTo][categories]
-    else:
-        f = f.iloc[:indexTo][categories]
+        #check whether dateFrom parameter is used; adjust accordingly
+        if not dateFrom == None:
+            f = f.iloc[indexFrom:indexTo][categories]
+        else:
+            f = f.iloc[:indexTo][categories]
 
-    f['date'] = f['date'].apply(lambda x: convertIntToTime(x))
+        f['date'] = f['date'].apply(lambda x: convertIntToTime(x))
 
-    return f
+        return f
 
+    except KeyError as ke:
+        print("One or more of the parameters in the list of categories is invalid. Check and correct the parameters, then run again.")
+        print('\033[91m' + "KeyError: " + str(ke))
+
+    except IndexError as ie:
+        print("The date is not inputted correctly. Check that the date is an integer in YYYYMMDD format and is not the current day.")
+        print('\033[91m' + "KeyError: " + str(ie))
+
+    except ValueError as ve:
+        print("The region inputted is invalid. Correct the region code, then try again.")
+        print('\033[91m' + "KeyError: " + str(ve))
 
 def graphCovidData(categories, dateTo, region, rollingAverageInDays, windowTitle):
     """

@@ -1,9 +1,14 @@
+# -*- coding: utf-8 -*-
+# 2020-12-22
+# Josh Ye
+
 import Main
 import statsmodels.api as sm
 import inspect
 import sys
 
-def OLSBase(categories, dateTo, region, rollingAverageInDays, lagInDays):
+# TODO: make checks so that the data always has more than two data points. Warn if less than 10. This occurs when the rollingAverage/lagInDays is greater than the difference between dateTo and dateFrom.
+def OLSBase(categories, dateTo, region, rollingAverageInDays, lagInDays, dateFrom=None):
     """
     Base function for OLS calculations.
     :param categories:
@@ -16,7 +21,7 @@ def OLSBase(categories, dateTo, region, rollingAverageInDays, lagInDays):
     # note for reference: first element in categories list is ALWAYS taken as x in OLS calculation. The second element is always taken as y.
     # This, however, will not change the r^2 value.
     try:
-        f = Main.formatDataFrame(categories, dateTo, region)
+        f = Main.formatDataFrame(categories, dateTo, region, dateFrom)
     except Exception as e:
         print(e)
         sys.exit(1)
@@ -44,7 +49,7 @@ def OLSBase(categories, dateTo, region, rollingAverageInDays, lagInDays):
     return ols
 
 
-def getRSquared(categories, dateTo, region, rollingAverageInDays, lagInDays):
+def getRSquared(categories, dateTo, region, rollingAverageInDays, lagInDays, dateFrom=None):
     """
     Getter function for the rsquared statistic
     :param categories:
@@ -59,11 +64,11 @@ def getRSquared(categories, dateTo, region, rollingAverageInDays, lagInDays):
         print("The categories array must have a length of 2!")
         return
     else:
-        ols = OLSBase(categories, dateTo, region, rollingAverageInDays, lagInDays)
+        ols = OLSBase(categories, dateTo, region, rollingAverageInDays, lagInDays, dateFrom)
         return ols.rsquared
 
 
-def getOLSSlope(categories, dateTo, region, rollingAverageInDays, lagInDays):
+def getOLSSlope(categories, dateTo, region, rollingAverageInDays, lagInDays, dateFrom=None):
     """
     Getter function for the slope statistic
     :param categories:
@@ -77,5 +82,5 @@ def getOLSSlope(categories, dateTo, region, rollingAverageInDays, lagInDays):
         print("The categories array must have a length of 2!")
         return
     else:
-        ols = OLSBase(categories, dateTo, region, rollingAverageInDays, lagInDays)
+        ols = OLSBase(categories, dateTo, region, rollingAverageInDays, lagInDays, dateFrom)
         return ols.params[1]

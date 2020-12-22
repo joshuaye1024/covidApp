@@ -1,3 +1,7 @@
+# -*- coding: utf-8 -*-
+# 2020-12-22
+# Josh Ye
+
 import tkinter as tk
 from tkinter import ttk
 import Overrides

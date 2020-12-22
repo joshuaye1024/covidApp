@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2020-12-18
+# 2020-12-22
 # Josh Ye
 
 from tkinter import StringVar
@@ -106,7 +106,7 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
         print("The region inputted is invalid. Correct the region code, then try again.")
         print('\033[91m' + "KeyError: " + str(ve))
 
-def graphCovidData(categories, dateTo, region, rollingAverageInDays, windowTitle):
+def graphCovidData(categories, dateTo, region, rollingAverageInDays, windowTitle, dateFrom=None):
     """
     Returns a graph of the requested covid data.
     :param categories: array of numerical categories to be graphed
@@ -117,7 +117,7 @@ def graphCovidData(categories, dateTo, region, rollingAverageInDays, windowTitle
     :returns: graph of data
     """
 
-    f = formatDataFrame(categories, dateTo, region)
+    f = formatDataFrame(categories, dateTo, region, dateFrom)
 
     # get graphable columns
 

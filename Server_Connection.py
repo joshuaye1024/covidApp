@@ -11,6 +11,10 @@ import pandas as pd
 
 log: Logger = logging.getLogger(__name__)
 
+#TODO: Check if region code is valid; if not, raise an exception. Possibly a custom one. Log as error.
+#TODO: Check date formats between 1. workbench file 2. covid api dataframe 3. function argument integer
+#TODO: copy all table names for the insert once trileaf api updated. ez.
+#TODO: Use logger to check if there are any missing columns after import.
 class CovidDataImport:
 
     def insert_covid_region(self, dbclient: DBClient, region_id: str) -> bool:
@@ -90,3 +94,17 @@ class CovidDataImport:
         # region_stats.itertuples() is what I did for data_collector
 
         return inserts
+
+        def get_latest_date(self,
+                            dbclient: DBClient,
+                            region_id: str,)->str:
+            # get latest date in database
+            latest: str = dbclient.query(
+                sql='SELECT MAX({dt}) FROM {t_cs}'.format(
+                    t_cs=api.TABLE_COVID_REGION_STATS,
+                    dt=api.COVID_REG_STAT_DATETIME
+                )
+            )
+
+            return latest
+

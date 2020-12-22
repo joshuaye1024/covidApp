@@ -136,6 +136,6 @@ def graphCovidData(categories, dateTo, region, rollingAverageInDays, windowTitle
     # get current figure and set dimensions
     fig = plt.gcf()
     fig.canvas.set_window_title(windowTitle)
-    fig.set_size_inches(18.5, 10.5)
+    fig.set_size_inches(10,6)
 
     plt.show()

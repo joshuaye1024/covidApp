@@ -7,9 +7,13 @@ from tkinter import ttk
 import Overrides
 import Main
 import datetime
+import ctypes
 
 #Create class mainGui as instance of tk.Tk
 class MainGui(tk.Tk):
+
+    #set GUI to be dpi-aware to avoid blurry fonts. See shcore documentation for Dpi awareness codes.
+    ctypes.windll.shcore.SetProcessDpiAwareness(2)
 
     def __init__(self):
         super().__init__()

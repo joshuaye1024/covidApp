@@ -5,9 +5,10 @@
 from typing import Tuple
 import logging
 from logging import Logger
-from trileaf_db.db_client import DBClient
+import trileaf_db.db_client as db_client
 from trileaf_db import db_api as api
 import pandas as pd
+import Main
 
 log: Logger = logging.getLogger(__name__)
 
@@ -17,7 +18,7 @@ log: Logger = logging.getLogger(__name__)
 #TODO: Use logger to check if there are any missing columns after import.
 class CovidDataImport:
 
-    def insert_covid_region(self, dbclient: DBClient, region_id: str) -> bool:
+    def insert_covid_region(self, dbclient: db_client.DBClient, region_id: str) -> bool:
         """Insert new covid region. Separate from inserting the statistics for the region, which is given in the next method.
 
         Returns:
@@ -43,7 +44,7 @@ class CovidDataImport:
 
 
     def insert_covid_region_stats(self,
-                                  dbclient: DBClient,
+                                  dbclient: db_client.DBClient,
                                   region_id: str,
                                   region_stats: pd.DataFrame) -> int:
         """Insert new covid region stats.
@@ -78,7 +79,18 @@ class CovidDataImport:
         log.debug('region {} in database'.format(region_id))
 
         inserts: int = dbclient.multiquery(
-            sql='insert into {t_crs}({id},{dt},{pos},{etc}) values (%s,%s,%s)'.format(
+            sql='insert into {t_crs}({id}, {date}, {pos}, '
+                '{neg}, {pend}, {prob}, '
+                '{res_tot}, {res_src}, {hosp_curr}, '
+                '{hosp_tot}, {icu_curr}, {icu_tot}, '
+                '{vent_curr}, {vent_tot}, {rec}, {qual}, '
+                '{lastup}, {death}, {tot_test_vir}, {pos_vir}, '
+                '{neg_vir}, {pos_case_vir}, {conf_death}, {prob_death}, '
+                '{tot_enc_vir}, {tot_peep_vir}, {tot_ant}, {pos_ant}, '
+                '{neg_ant}, {tot_peep_ant}, {pos_peep_ant}, {neg_peep_ant}, '
+                '{tot_test_anti}, {tot_peep_anti}, {pos_peep_anti}, '
+                '{pos_anti}, {pos_incr}, {tot_res_incr}, {death_incr}, '
+                '{hosp_incr}) values (%s,%s,%s)'.format(
                 t_crs=api.TABLE_COVID_REGION_STATS,
                 id=api.COVID_STATS_REGION_ID,
                 date=api.COVID_STATS_DATETIME,
@@ -132,7 +144,7 @@ class CovidDataImport:
         return inserts
 
     def get_latest_date(self,
-                        dbclient: DBClient,
+                        dbclient: db_client.DBClient,
                         region_id: str,):
         # get latest date in database
         latest: str = dbclient.query(
@@ -143,4 +155,34 @@ class CovidDataImport:
         )
 
         return latest
+
+    def main(self):
+        # load db credentials from ./res/secrets/db_credentials.txt
+        db_client.init()
+
+        # create connection client
+        dbclient: db_client.DBClient = db_client.DBClient()
+
+        if dbclient.connected():
+            # fetch historical region stats from covid api
+            # this doesn't show how to skip older data that's already collected
+
+            date =self.get_latest_date()
+
+            region_code: str = 'xx'
+            region_stats: pd.DataFrame = Main.getCovidData(date, region_code)
+
+            inserts: int = self.insert_covid_region_stats(
+                dbclient,
+                region_code,
+                region_stats
+            )
+
+            log.info('inserted {} new rows for region {}'.format(
+                inserts,
+                region_code
+            ))
+
+        else:
+            log.error('failed to connect to trileaf database')
 

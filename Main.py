@@ -86,9 +86,15 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
 
         #check whether dateFrom parameter is used; adjust accordingly
         if not dateFrom == None:
-            f = f.iloc[indexFrom:indexTo][categories]
+            if 'all' not in categories:
+                f = f.iloc[indexFrom:indexTo][categories]
+            else:
+                f = f.iloc[indexFrom:indexTo]
         else:
-            f = f.iloc[:indexTo][categories]
+            if 'all' not in categories:
+                f = f.iloc[:indexTo][categories]
+            else:
+                f = f.iloc[:indexTo]
 
         f['date'] = f['date'].apply(lambda x: convertIntToTime(x))
 

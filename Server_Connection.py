@@ -167,7 +167,7 @@ class CovidDataImport:
             # fetch historical region stats from covid api
             # this doesn't show how to skip older data that's already collected
 
-            date =self.get_latest_date()
+            #date =self.get_latest_date()
 
             region_code: str = 'xx'
             region_stats: pd.DataFrame = Main.getCovidData(date, region_code)

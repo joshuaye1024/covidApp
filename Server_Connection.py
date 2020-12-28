@@ -131,16 +131,16 @@ class CovidDataImport:
 
         return inserts
 
-        def get_latest_date(self,
-                            dbclient: DBClient,
-                            region_id: str,)->str:
-            # get latest date in database
-            latest: str = dbclient.query(
-                sql='SELECT MAX({dt}) FROM {t_cs}'.format(
-                    t_cs=api.TABLE_COVID_REGION_STATS,
-                    dt=api.COVID_REG_STAT_DATETIME
-                )
+    def get_latest_date(self,
+                        dbclient: DBClient,
+                        region_id: str,):
+        # get latest date in database
+        latest: str = dbclient.query(
+            sql='SELECT MAX({dt}) FROM {t_cs}'.format(
+                t_cs=api.TABLE_COVID_REGION_STATS,
+                dt=api.COVID_REG_STAT_DATETIME
             )
+        )
 
-            return latest
+        return latest
 

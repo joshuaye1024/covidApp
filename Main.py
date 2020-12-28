@@ -24,6 +24,7 @@ def getCovidData(date, region):
 
     if (region == 'us'):
         url = "https://api.covidtracking.com/v1/us/" + date + ".json"
+        date = str(date)
         if (date == 'current'):
             data = json.loads(requests.get(url).text)[0]
         elif (date == 'daily'):
@@ -80,6 +81,10 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
     :returns: dataframe of data
     """
     try:
+        if convertIntToTime(dateTo) == datetime.datetime.today():
+            #if dateTo is equal to the current date, use yesterday's dateInt as the dateTo param
+            dateTo = convertTimeToInt(datetime.datetime.today() - datetime.timedelta(days = 1))
+
         f = getCovidData("daily", region)
 
         # reverse data frame

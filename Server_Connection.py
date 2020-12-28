@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# 2020-12-22
+# 2020-12-28
 # Josh Ye with help from Owen Gallagher
 
 from typing import Tuple
@@ -145,44 +145,58 @@ class CovidDataImport:
 
     def get_latest_date(self,
                         dbclient: db_client.DBClient,
-                        region_id: str,):
+                        region_id: str,)->int:
         # get latest date in database
-        latest: str = dbclient.query(
-            sql='SELECT MAX({dt}) FROM {t_cs}'.format(
+        latest = dbclient.query(
+            sql='SELECT MAX({dt}) FROM {t_cs} WHERE id = {reg}'.format(
                 t_cs=api.TABLE_COVID_REGION_STATS,
-                dt=api.COVID_REG_STAT_DATETIME
+                dt=api.COVID_REG_STAT_DATETIME,
+                reg = region_id
             )
         )
 
-        return latest
+        #the var "latest" will be a datetime. As we use Main.formatDataFrame as our source data,
+        #the datetime will be saved in the server as a datetime, so we must convert. See Main.py.
+        return Main.convertTimeToInt(latest)
 
-    def main(self):
+    def main(self, reg:str):
         # load db credentials from ./res/secrets/db_credentials.txt
         db_client.init()
 
         # create connection client
         dbclient: db_client.DBClient = db_client.DBClient()
 
-        if dbclient.connected():
-            # fetch historical region stats from covid api
-            # this doesn't show how to skip older data that's already collected
+        def write_data(terr:str):
+            if dbclient.connected():
+                # fetch historical region stats from covid api
+                # this doesn't show how to skip older data that's already collected
 
-            #date =self.get_latest_date()
+                #date here must be an Int to follow Main.formatDataFrame parameter format
+                dateFromInt = self.get_latest_date(dbclient, reg)
 
-            region_code: str = 'xx'
-            region_stats: pd.DataFrame = Main.getCovidData(date, region_code)
+                region_code: str = reg
 
-            inserts: int = self.insert_covid_region_stats(
-                dbclient,
-                region_code,
-                region_stats
-            )
+                #we use formatDataFrame here to be more flexible with the columns in the dataframe
+                region_stats: pd.DataFrame = Main.formatDataFrame(['all'], dateToInt, reg, dateFromInt)
 
-            log.info('inserted {} new rows for region {}'.format(
-                inserts,
-                region_code
-            ))
+                inserts: int = self.insert_covid_region_stats(
+                    dbclient,
+                    region_code,
+                    region_stats
+                )
 
-        else:
-            log.error('failed to connect to trileaf database')
+                log.info('inserted {} new rows for region {}'.format(
+                    inserts,
+                    region_code
+                ))
+
+            else:
+                log.error('failed to connect to trileaf database')
+
+        if reg == 'us':
+            #TODO: make constant somewhere storing the list of territories
+            for territory in list_of_terrs:
+                write_data(territory)
+
+
 

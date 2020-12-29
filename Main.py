@@ -9,7 +9,7 @@ import json
 import pandas as pd
 
 import matplotlib.pyplot as plt
-from datetime import datetime
+from datetime import datetime, timedelta
 import inspect
 from matplotlib.widgets import Slider
 
@@ -81,9 +81,9 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
     :returns: dataframe of data
     """
     try:
-        if convertIntToTime(dateTo) == datetime.datetime.today():
+        if convertIntToTime(dateTo) == datetime.today():
             #if dateTo is equal to the current date, use yesterday's dateInt as the dateTo param
-            dateTo = convertTimeToInt(datetime.datetime.today() - datetime.timedelta(days = 1))
+            dateTo = convertTimeToInt(datetime.today() - timedelta(days = 1))
 
         f = getCovidData("daily", region)
 

@@ -9,7 +9,7 @@ import trileaf_db.db_client as db_client
 from trileaf_db import db_api as api
 import pandas as pd
 import Main
-import datetime
+from datetime import datetime
 
 log: Logger = logging.getLogger(__name__)
 
@@ -180,7 +180,7 @@ class CovidDataImport:
                 #we use formatDataFrame here to be more flexible with the columns in the dataframe
                 #we use today() as the dateTo with the assumption that a server connection will be opened
                 #for the express purpose of updatating this table to the latest possible date.
-                region_stats: pd.DataFrame = Main.formatDataFrame(['all'], datetime.datetime.today(), reg, dateFromInt)
+                region_stats: pd.DataFrame = Main.formatDataFrame(['all'], datetime.today(), reg, dateFromInt)
 
                 inserts: int = self.insert_covid_region_stats(
                     dbclient,

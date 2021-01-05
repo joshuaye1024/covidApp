@@ -51,23 +51,26 @@ def lowerStringVar(var):
         var.set(var.get().lower())
 
 
-def convertIntToTime(number):
+def convertIntToDate(number):
     """
-    Converts dateInt to dateTime for server write
+    Converts dateInt to date for server write
     :param number: date in YYYYMMDD form to convert
-    :return: equivalent datetime object of input date
+    :return: equivalent date object of input date
     """
-    datetime_object = datetime.strptime(str(number), '%Y%m%d')
+    dt = datetime.strptime(str(number), '%Y%m%d')
 
-    return datetime_object
+    date_object = date(dt.year, dt.month, dt.day)
 
-def convertTimeToInt(dt):
+    return date_object
+
+def convertDateToInt(dt):
     """
-    Converts dateTime from server to dateInt input
+    Converts date from server to dateInt input
     :param dt:
-    :return: equivalent dateInt object; if input is not a datetime, return None.
+    :return: equivalent dateInt object; if input is not a date, return None.
     """
-    if isinstance(dt, datetime) == False or isinstance(dt, date) == False:
+    #checks if input date is a date
+    if isinstance(dt, date) == False:
         return None
 
     else:
@@ -85,9 +88,14 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
     :returns: dataframe of data
     """
     try:
-        if convertIntToTime(dateTo) == datetime.today():
+        today = datetime.today()
+        todayDate = date(today.year, today.month, today.day)
+
+        if convertIntToDate(dateTo) == todayDate:
             #if dateTo is equal to the current date, use yesterday's dateInt as the dateTo param
-            dateTo = convertTimeToInt(datetime.today() - timedelta(days = 1))
+            dateTo = convertDateToInt(todayDate - timedelta(days = 1))
+
+        print(dateTo)
 
         f = getCovidData("daily", region)
 
@@ -117,7 +125,7 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
                 f = f.iloc[:indexTo]
         print(type(f['date'][0]))
 
-        f['date'] = f['date'].apply(lambda x: convertIntToTime(x))
+        f['date'] = f['date'].apply(lambda x: convertIntToDate(x))
 
         print(type(f['date'][0]))
 

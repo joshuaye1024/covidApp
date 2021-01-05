@@ -9,7 +9,7 @@ import trileaf_db.db_client as db_client
 from trileaf_db import db_api as api
 import pandas as pd
 import Main
-from datetime import datetime
+from datetime import datetime, date
 import sys
 
 log: Logger = logging.getLogger(__name__)
@@ -92,7 +92,7 @@ class CovidDataImport:
                 '{neg_ant}, {tot_peep_ant}, {pos_peep_ant}, {neg_peep_ant}, '
                 '{tot_test_anti}, {tot_peep_anti}, {pos_peep_anti}, '
                 '{pos_anti}, {pos_incr}, {tot_res_incr}, {death_incr}, '
-                '{hosp_incr}) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'.format(
+                '{hosp_incr}) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'.format(
                 t_crs=api.TABLE_COVID_REGION_STATS,
                 id=api.COVID_STATS_REGION_ID,
                 date=api.COVID_STATS_DATETIME,
@@ -159,12 +159,17 @@ class CovidDataImport:
         #Main.convertTimeToInt returns None if the latest time does not exist in the database.
         #Therefore, get_latest_date will also return none if the latest time does not exist.
 
-        final = Main.convertTimeToInt(latest)
+        final = Main.convertDateToInt(latest)
 
-        print(final)
-        #the var "latest" will be a datetime. As we use Main.formatDataFrame as our source data,
-        #the datetime will be saved in the server as a datetime, so we must convert. See Main.py.
-        return final
+        if final == None:
+            return None
+        else:
+            finalDate = date(final.year, final.month, final.day)
+
+            print(finalDate)
+            #the var "latest" will be a datetime. As we use Main.formatDataFrame as our source data,
+            #the datetime will be saved in the server as a datetime, so we must convert. See Main.py.
+            return finalDate
 
     def main(self, reg:str):
         # load db credentials from ./res/secrets/db_credentials.txt
@@ -187,7 +192,10 @@ class CovidDataImport:
                 #we use today() as the dateTo with the assumption that a server connection will be opened
                 #for the express purpose of updatating this table to the latest possible date.
 
-                currDate = Main.convertTimeToInt(datetime.today())
+                today = datetime.today()
+                todayDate = date(today.year, today.month, today.day)
+
+                currDate = Main.convertDateToInt(todayDate)
 
                 region_stats: pd.DataFrame = Main.formatDataFrame(['all'], currDate, reg, dateFromInt)
 

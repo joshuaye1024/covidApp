@@ -178,7 +178,7 @@ class CovidDataImport:
         # create connection client
         dbclient: db_client.DBClient = db_client.DBClient()
 
-        def write_data(terr:str):
+        def write_data(terr:str, dbclient):
             if dbclient.connected():
                 # fetch historical region stats from covid api
                 # this doesn't show how to skip older data that's already collected
@@ -201,7 +201,7 @@ class CovidDataImport:
 
                 inserts: int = self.insert_covid_region_stats(
                     dbclient,
-                    region_code,
+                    terr,
                     region_stats
                 )
 
@@ -213,7 +213,7 @@ class CovidDataImport:
             else:
                 log.error('failed to connect to trileaf database')
 
-        write_data(reg)
+        write_data(reg,dbclient)
         #if reg == 'us':
             #TODO: make constant somewhere storing the list of territories
             #for territory in list_of_terrs:

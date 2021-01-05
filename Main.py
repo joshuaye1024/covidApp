@@ -129,6 +129,9 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
 
         print(type(f['date'][0]))
 
+        #replace all nan with 0
+        f = f.fillna(0)
+
         return f
 
     except KeyError as ke:

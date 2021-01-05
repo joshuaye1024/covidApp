@@ -9,7 +9,7 @@ import json
 import pandas as pd
 
 import matplotlib.pyplot as plt
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import inspect
 from matplotlib.widgets import Slider
 
@@ -61,15 +61,19 @@ def convertIntToTime(number):
 
     return datetime_object
 
-def convertTimeToInt(datetime):
+def convertTimeToInt(dt):
     """
     Converts dateTime from server to dateInt input
-    :param datetime:
-    :return: equivalent dateInt object
+    :param dt:
+    :return: equivalent dateInt object; if input is not a datetime, return None.
     """
-    dateInt = int(datetime.strftime('%Y%m%d'))
+    if isinstance(dt, datetime) == False or isinstance(dt, date) == False:
+        return None
 
-    return dateInt
+    else:
+        dateInt = int(dt.strftime('%Y%m%d'))
+
+        return dateInt
 
 
 def formatDataFrame(categories, dateTo, region, dateFrom=None):
@@ -111,8 +115,11 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
                 f = f.iloc[:indexTo][categories]
             else:
                 f = f.iloc[:indexTo]
+        print(type(f['date'][0]))
 
         f['date'] = f['date'].apply(lambda x: convertIntToTime(x))
+
+        print(type(f['date'][0]))
 
         return f
 
@@ -131,6 +138,7 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
 def graphCovidData(categories, dateTo, region, rollingAverageInDays, windowTitle, dateFrom=None):
     """
     Returns a graph of the requested covid data.
+    :param categories: array of numerical categories to be graphed
     :param categories: array of numerical categories to be graphed
     :param dateTo: int of date to be graphed up to
     :region: string of region code

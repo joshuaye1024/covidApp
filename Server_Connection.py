@@ -10,6 +10,7 @@ from trileaf_db import db_api as api
 import pandas as pd
 import Main
 from datetime import datetime
+import sys
 
 log: Logger = logging.getLogger(__name__)
 
@@ -146,19 +147,24 @@ class CovidDataImport:
 
     def get_latest_date(self,
                         dbclient: db_client.DBClient,
-                        region_id: str,)->int:
+                        region_id: str,):
         # get latest date in database
         latest = dbclient.query(
-            sql='SELECT MAX({dt}) FROM {t_cs} WHERE id = {reg}'.format(
+            sql='SELECT MAX({dt}) FROM {t_cs} WHERE region_id = {reg}'.format(
                 t_cs=api.TABLE_COVID_REGION_STATS,
-                dt=api.COVID_REG_STAT_DATETIME,
-                reg = region_id
+                dt=api.COVID_STATS_DATETIME,
+                reg = "\'" + region_id + "\'"
             )
         )
+        #Main.convertTimeToInt returns None if the latest time does not exist in the database.
+        #Therefore, get_latest_date will also return none if the latest time does not exist.
 
+        final = Main.convertTimeToInt(latest)
+
+        print(final)
         #the var "latest" will be a datetime. As we use Main.formatDataFrame as our source data,
         #the datetime will be saved in the server as a datetime, so we must convert. See Main.py.
-        return Main.convertTimeToInt(latest)
+        return final
 
     def main(self, reg:str):
         # load db credentials from ./res/secrets/db_credentials.txt
@@ -180,7 +186,10 @@ class CovidDataImport:
                 #we use formatDataFrame here to be more flexible with the columns in the dataframe
                 #we use today() as the dateTo with the assumption that a server connection will be opened
                 #for the express purpose of updatating this table to the latest possible date.
-                region_stats: pd.DataFrame = Main.formatDataFrame(['all'], datetime.today(), reg, dateFromInt)
+
+                currDate = Main.convertTimeToInt(datetime.today())
+
+                region_stats: pd.DataFrame = Main.formatDataFrame(['all'], currDate, reg, dateFromInt)
 
                 inserts: int = self.insert_covid_region_stats(
                     dbclient,

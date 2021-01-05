@@ -91,7 +91,7 @@ class CovidDataImport:
                 '{neg_ant}, {tot_peep_ant}, {pos_peep_ant}, {neg_peep_ant}, '
                 '{tot_test_anti}, {tot_peep_anti}, {pos_peep_anti}, '
                 '{pos_anti}, {pos_incr}, {tot_res_incr}, {death_incr}, '
-                '{hosp_incr}) values (%s,%s,%s)'.format(
+                '{hosp_incr}) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'.format(
                 t_crs=api.TABLE_COVID_REGION_STATS,
                 id=api.COVID_STATS_REGION_ID,
                 date=api.COVID_STATS_DATETIME,
@@ -196,10 +196,11 @@ class CovidDataImport:
             else:
                 log.error('failed to connect to trileaf database')
 
-        if reg == 'us':
+        write_data(reg)
+        #if reg == 'us':
             #TODO: make constant somewhere storing the list of territories
-            for territory in list_of_terrs:
-                write_data(territory)
+            #for territory in list_of_terrs:
+                #write_data(territory)
 
 
 

@@ -154,8 +154,6 @@ class CovidDataImport:
             return None
         else:
             finalDate = date(final.year, final.month, final.day)
-
-            print(finalDate)
             #the var "latest" will be a datetime. As we use Main.formatDataFrame as our source data,
             #the datetime will be saved in the server as a datetime, so we must convert. See Main.py.
             return finalDate
@@ -173,9 +171,9 @@ class CovidDataImport:
                 # this doesn't show how to skip older data that's already collected
 
                 #date here must be an Int to follow Main.formatDataFrame parameter format
-                dateFromInt = self.get_latest_date(dbclient, reg)
+                dateFromInt = self.get_latest_date(dbclient, terr)
 
-                region_code: str = reg
+                region_code: str = terr
 
                 #we use formatDataFrame here to be more flexible with the columns in the dataframe
                 #we use today() as the dateTo with the assumption that a server connection will be opened
@@ -187,7 +185,7 @@ class CovidDataImport:
                 currDate = Main.convertDateToInt(todayDate)
 
                 #region_stats: pd.DataFrame = Main.formatDataFrame(['all'], currDate, reg, dateFromInt)
-                region_stats = Main.formatDataFrame(['state','date','positive','negative','pending','probableCases','totalTestResults','totalTestResultsSource','hospitalizedCurrently','hospitalizedCumulative','inIcuCurrently','inIcuCumulative','onVentilatorCurrently','onVentilatorCumulative','recovered','dataQualityGrade','lastUpdateEt','death','totalTestsViral','positiveTestsViral','negativeTestsViral','positiveCasesViral','deathConfirmed','deathProbable','totalTestEncountersViral','totalTestsPeopleViral','totalTestsAntibody','positiveTestsAntibody','negativeTestsAntibody','totalTestsPeopleAntibody','positiveTestsPeopleAntibody','negativeTestsPeopleAntibody','totalTestsAntigen','totalTestsPeopleAntigen','positiveTestsPeopleAntigen','positiveTestsAntigen','positiveIncrease','totalTestResultsIncrease','deathIncrease','hospitalizedIncrease'], currDate, reg, dateFromInt)
+                region_stats = Main.formatDataFrame(['state','date','positive','negative','pending','probableCases','totalTestResults','totalTestResultsSource','hospitalizedCurrently','hospitalizedCumulative','inIcuCurrently','inIcuCumulative','onVentilatorCurrently','onVentilatorCumulative','recovered','dataQualityGrade','lastUpdateEt','death','totalTestsViral','positiveTestsViral','negativeTestsViral','positiveCasesViral','deathConfirmed','deathProbable','totalTestEncountersViral','totalTestsPeopleViral','totalTestsAntibody','positiveTestsAntibody','negativeTestsAntibody','totalTestsPeopleAntibody','positiveTestsPeopleAntibody','negativeTestsPeopleAntibody','totalTestsAntigen','totalTestsPeopleAntigen','positiveTestsPeopleAntigen','positiveTestsAntigen','positiveIncrease','totalTestResultsIncrease','deathIncrease','hospitalizedIncrease'], currDate, terr, dateFromInt)
                 region_stats = region_stats[region_stats.columns[::-1]]
 
                 inserts: int = self.insert_covid_region_stats(
@@ -201,12 +199,31 @@ class CovidDataImport:
                     region_code
                 ))
 
-                print("Data inserted into table successfully.")
-
             else:
                 log.error('failed to connect to trileaf database')
 
-        write_data(reg,dbclient)
+        if reg != 'all':
+            write_data(reg,dbclient)
+            print("Data inserted into table successfully for region " + reg + "!")
+        elif reg == 'all':
+            us_terrs = ["AL", "AK", "AS", "AZ", "AR", "CA",
+             "CO", "CT", "DE", "DC", "FL", "GA", "GU",
+             "HI", "ID", "IL", "IN", "IA", "KS", "KY",
+             "LA", "ME", "MD", "MA", "MI", "MN", "MS",
+             "MO", "MT", "NE", "NV", "NH", "NJ", "NM",
+             "NY", "NC", "ND", "MP", "OH", "OK", "OR",
+             "PA", "PR", "RI", "SC", "SD", "TN", "TX",
+             "VI", "UT", "VT", "VA", "WA", "WV", "WI", "WY"]
+
+            percent_complete = 0
+
+            for t in us_terrs:
+                write_data(t, dbclient)
+                percent_complete = ((us_terrs.index(t) + 1) / len(us_terrs))
+                print("Data inserted into table successfully for region " + t + "! [" + "{:.5s}".format(
+                    str(round(percent_complete, 2) * 100)) + "% complete]")
+
+
         #if reg == 'us':
             #TODO: make constant somewhere storing the list of territories
             #for territory in list_of_terrs:

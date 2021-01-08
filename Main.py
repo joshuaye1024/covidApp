@@ -101,7 +101,6 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
             #if dateTo is equal to the current date, use yesterday's dateInt as the dateTo param
             dateTo = convertDateToInt(todayDate - timedelta(days = 1))
 
-
         f = getCovidData("daily", region)
 
         # reverse data frame

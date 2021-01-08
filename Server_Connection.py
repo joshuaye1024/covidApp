@@ -81,18 +81,7 @@ class CovidDataImport:
         log.debug('region {} in database'.format(region_id))
 
         inserts: int = dbclient.multiquery(
-            sql='insert into {t_crs}({id}, {date}, {pos}, '
-                '{neg}, {pend}, {prob}, '
-                '{res_tot}, {res_src}, {hosp_curr}, '
-                '{hosp_tot}, {icu_curr}, {icu_tot}, '
-                '{vent_curr}, {vent_tot}, {rec}, {qual}, '
-                '{lastup}, {death}, {tot_test_vir}, {pos_vir}, '
-                '{neg_vir}, {pos_case_vir}, {conf_death}, {prob_death}, '
-                '{tot_enc_vir}, {tot_peep_vir}, {tot_ant}, {pos_ant}, '
-                '{neg_ant}, {tot_peep_ant}, {pos_peep_ant}, {neg_peep_ant}, '
-                '{tot_test_anti}, {tot_peep_anti}, {pos_peep_anti}, '
-                '{pos_anti}, {pos_incr}, {tot_res_incr}, {death_incr}, '
-                '{hosp_incr}) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'.format(
+            sql='insert into {t_crs}({id}, {date}, {pos}, {neg}, {pend}, {prob}, {res_tot}, {res_src}, {hosp_curr},{hosp_tot}, {icu_curr}, {icu_tot},{vent_curr}, {vent_tot}, {rec}, {qual},{lastup}, {death}, {tot_test_vir}, {pos_vir},{neg_vir}, {pos_case_vir}, {conf_death}, {prob_death},{tot_enc_vir}, {tot_peep_vir}, {tot_ant}, {pos_ant},{neg_ant}, {tot_peep_ant}, {pos_peep_ant}, {neg_peep_ant},{tot_test_anti}, {tot_peep_anti}, {pos_peep_anti},{pos_anti}, {pos_incr}, {tot_res_incr}, {death_incr},{hosp_incr}) values (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)'.format(
                 t_crs=api.TABLE_COVID_REGION_STATS,
                 id=api.COVID_STATS_REGION_ID,
                 date=api.COVID_STATS_DATETIME,
@@ -197,7 +186,9 @@ class CovidDataImport:
 
                 currDate = Main.convertDateToInt(todayDate)
 
-                region_stats: pd.DataFrame = Main.formatDataFrame(['all'], currDate, reg, dateFromInt)
+                #region_stats: pd.DataFrame = Main.formatDataFrame(['all'], currDate, reg, dateFromInt)
+                region_stats = Main.formatDataFrame(['state','date','positive','negative','pending','probableCases','totalTestResults','totalTestResultsSource','hospitalizedCurrently','hospitalizedCumulative','inIcuCurrently','inIcuCumulative','onVentilatorCurrently','onVentilatorCumulative','recovered','dataQualityGrade','lastUpdateEt','death','totalTestsViral','positiveTestsViral','negativeTestsViral','positiveCasesViral','deathConfirmed','deathProbable','totalTestEncountersViral','totalTestsPeopleViral','totalTestsAntibody','positiveTestsAntibody','negativeTestsAntibody','totalTestsPeopleAntibody','positiveTestsPeopleAntibody','negativeTestsPeopleAntibody','totalTestsAntigen','totalTestsPeopleAntigen','positiveTestsPeopleAntigen','positiveTestsAntigen','positiveIncrease','totalTestResultsIncrease','deathIncrease','hospitalizedIncrease'], currDate, reg, dateFromInt)
+                region_stats = region_stats[region_stats.columns[::-1]]
 
                 inserts: int = self.insert_covid_region_stats(
                     dbclient,
@@ -209,6 +200,8 @@ class CovidDataImport:
                     inserts,
                     region_code
                 ))
+
+                print("Data inserted into table successfully.")
 
             else:
                 log.error('failed to connect to trileaf database')

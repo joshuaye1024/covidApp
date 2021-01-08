@@ -78,6 +78,12 @@ def convertDateToInt(dt):
 
         return dateInt
 
+def convertTimestampToDatetime(ts):
+
+    dt = ts.to_pydatetime()
+
+    return dt
+
 
 def formatDataFrame(categories, dateTo, region, dateFrom=None):
     """
@@ -95,7 +101,6 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
             #if dateTo is equal to the current date, use yesterday's dateInt as the dateTo param
             dateTo = convertDateToInt(todayDate - timedelta(days = 1))
 
-        print(dateTo)
 
         f = getCovidData("daily", region)
 
@@ -109,8 +114,13 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
 
         # return the data from start of covid to this date; show only graphable columns
 
-        categories.append('date')
+        if 'date' not in categories:
+            categories.append('date')
         categories = categories[::-1]
+
+        #make all dataQualityGrade cols str to avoid mixed-type columns for SQL to handle
+        f['dataQualityGrade'] = f['dataQualityGrade'].apply(lambda x: str(x))
+
 
         #check whether dateFrom parameter is used; adjust accordingly
         if not dateFrom == None:
@@ -123,11 +133,8 @@ def formatDataFrame(categories, dateTo, region, dateFrom=None):
                 f = f.iloc[:indexTo][categories]
             else:
                 f = f.iloc[:indexTo]
-        print(type(f['date'][0]))
 
         f['date'] = f['date'].apply(lambda x: convertIntToDate(x))
-
-        print(type(f['date'][0]))
 
         #replace all nan with 0
         f = f.fillna(0)

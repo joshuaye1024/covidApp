@@ -222,12 +222,3 @@ class CovidDataImport:
                 percent_complete = ((us_terrs.index(t) + 1) / len(us_terrs))
                 print("Data inserted into table successfully for region " + t + "! [" + "{:.5s}".format(
                     str(round(percent_complete, 2) * 100)) + "% complete]")
-
-
-        #if reg == 'us':
-            #TODO: make constant somewhere storing the list of territories
-            #for territory in list_of_terrs:
-                #write_data(territory)
-
-
-

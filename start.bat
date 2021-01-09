@@ -29,11 +29,11 @@ echo [covidApp] Checking if database connection key is present in secure folder.
 if exist %~dp0\res\secrets\db_credentials.txt (
     echo [covidApp] db_credentials.txt exists, server connection will be availible.
     set serverconnect=present
+    set "opt1=[32m1) Update server[0m"
 ) else (
     echo [covidApp] db_credentials.txt does not exist, server connection will not be availible.
     set serverconnect=not present
-    pause
-    goto :EOF
+    set "opt1=[31m1) Update server [x][0m"
 )
 
 echo.
@@ -52,10 +52,10 @@ goto :taskselect
 echo.
 echo Select a task:
 echo =============
-echo 1) Update server
-echo 2) Grab current data (Online, Json source)
-echo 3) Check API status (Online)
-echo 4) Get latest covid Data Summary (text)
+echo %opt1%
+echo [32m2) Grab current data (Online, Json source)[0m
+echo [32m3) Check API status (Online)[0m
+echo [32m4) Get latest covid Data Summary (text)[0m
 
 echo.
 set /p op=Type option:
@@ -117,7 +117,6 @@ goto :checkIfRepeat
 goto :EOF
 
 :checkIfRepeat
-
 CHOICE /T 5 /C YN /D N /M "[covidApp] Return to options list?"
 set _e=%ERRORLEVEL%
 if %_e%==1 goto :taskselect

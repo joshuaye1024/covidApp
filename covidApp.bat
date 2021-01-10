@@ -1,4 +1,4 @@
-@echo off & title Trileaf Technologies covidApp CLI
+@echo off & title covidApp
 
 Rem check if python exists before proceeding
 echo [46mWelcome to Trileaf Technologies' covidApp![0m
@@ -127,7 +127,6 @@ echo.
 goto:checkIfRepeat
 
 :checkIfRepeat
-pause
 CHOICE /T 5 /C YN /D N /M "[covidApp] Return to options list?"
 set _e=%ERRORLEVEL%
 if %_e%==1 goto :taskselect

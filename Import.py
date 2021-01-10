@@ -14,19 +14,19 @@ if option == 1:
     CovidDataImport().main(reg)
 
 if option == 2:
-    print("[Out] " + str(Main.getCovidData(yesterday,reg)))
+    print("[Output] " + str(Main.getCovidData(yesterday,reg)))
 
 if option == 3:
-    print("[Out] " + str(json.loads(requests.get('https://api.covidtracking.com/v1/status.json').text)))
+    print("[Output] " + str(json.loads(requests.get('https://api.covidtracking.com/v1/status.json').text)))
 
 if option == 4:
     jsonFrame = Main.getCovidData(yesterday,reg.lower())
 
     print(
-        '[Out] '+ 'On ' + yesterday + ", in region " + reg + ", there were " + str(jsonFrame['positiveIncrease']) + " new cases.\n"
-        + "[Out] Additionally, there were " + str(jsonFrame['inIcuCurrently']) + " individuals in the ICU on this day, and " + str(
+        '[Output] '+ 'On ' + yesterday + ", in region " + reg + ", there were " + str(jsonFrame['positiveIncrease']) + " new cases.\n"
+        + "[Output] Additionally, there were " + str(jsonFrame['inIcuCurrently']) + " individuals in the ICU on this day, and " + str(
             jsonFrame['onVentilatorCurrently'])
-        + " individuals on a ventilator.\n[Out] Furthermore, deaths increased by " + str(
+        + " individuals on a ventilator.\n[Output] Furthermore, deaths increased by " + str(
             jsonFrame['deathIncrease']) + ", and hospitalizations by "
         + str(jsonFrame['hospitalizedIncrease']) + "."
         )

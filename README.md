@@ -1,7 +1,7 @@
 # covidApp
 Covid Data Grabber
 
-This is a cli and GUI tool to grab relevant Covid-19 (Sars-Cov2) viral information from the [data API](https://covidtracking.com/data/api) provided by The Atlantic. The grabber also has the ability to write to the [Trileaf Database](https://github.com/trileaf-tech/data_collector) created and curated by Trileaf Technologies, LLC. 
+This is a cli and GUI (WIP) tool to grab relevant Covid-19 (Sars-Cov2) viral information from the [data API](https://covidtracking.com/data/api) provided by The Atlantic. The grabber also has the ability to write to the [Trileaf Database](https://github.com/trileaf-tech/data_collector) created and curated by Trileaf Technologies, LLC. 
 
 Since this project does not contain any source files from the Trileaf Database (which are strictly confidential), free use of this code is allowed. 
 

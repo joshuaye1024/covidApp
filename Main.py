@@ -15,7 +15,7 @@ from matplotlib.widgets import Slider
 
 def getCovidData(date, region):
     """
-    :param date: int
+    :param date: str
     :param region: string
     :return: Dictionary of Covid Data fields and values
 

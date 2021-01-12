@@ -6,6 +6,13 @@ import Main
 import statsmodels.api as sm
 import inspect
 import sys
+from datetime import datetime, date, timedelta
+
+def categories(reg):
+    today = datetime.today()
+    yesterdayDate = date(today.year, today.month, today.day) - timedelta(days = 1)
+
+    return Main.getCovidData(str(Main.convertDateToInt(yesterdayDate)),str(reg)).columns
 
 # TODO: make checks so that the data always has more than two data points. Warn if less than 10. This occurs when the rollingAverage/lagInDays is greater than the difference between dateTo and dateFrom.
 def OLSBase(categories, dateTo, region, rollingAverageInDays, lagInDays, dateFrom=None):

@@ -1,4 +1,7 @@
+@if (@CodeSection == @Batch) @then
 @echo off & title covidApp
+
+set SendKeys=CScript //nologo //E:JScript "%~F0"
 
 Rem check if python exists before proceeding
 echo [46mWelcome to Trileaf Technologies' covidApp![0m
@@ -59,7 +62,11 @@ echo [32m4) Get latest covid Data Summary (text)[0m
 echo [32m5) Enter Python console[0m
 
 echo.
-set /p op=Type option:
+SET /P op=option:
+IF NOT DEFINED op SET op=4
+rem set /p op=Type option:
+ping -n 11 127.0.0.1 > nul
+
 if "%op%"=="1" goto op1
 if "%op%"=="2" goto op2
 if "%op%"=="3" goto op3
@@ -139,5 +146,11 @@ echo %_e%
 echo.
 echo [covidApp] exiting...
 ping -n 2 127.0.0.1 > nul
+exit
 
 goto :EOF
+
+@end
+
+var WshShell = WScript.CreateObject("WScript.Shell");
+WshShell.SendKeys(WScript.Arguments(0));
